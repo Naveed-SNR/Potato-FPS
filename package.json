@@ -80,6 +80,9 @@
     "webpack-dev-server": "^5.0.4"
   },
   "dependencies": {
+    "@react-three/drei": "^9.106.0",
+    "@react-three/fiber": "^8.16.8",
+    "lil-gui": "^0.19.2",
     "three-mesh-bvh": "^0.7.5"
   }
 }
