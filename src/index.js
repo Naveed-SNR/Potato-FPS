@@ -1,7 +1,6 @@
 import * as THREE from 'three';
 import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeometry.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { PointerLockControls } from 'three/examples/jsm/controls/PointerLockControls.js';
 import * as BufferGeometryUtils from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import Stats from 'stats.js';
@@ -13,7 +12,7 @@ const params = {
 	displayCollider: false,
 	displayBVH: false,
 	visualizeDepth: 10,
-	gravity: -30,
+	gravity: -9.8,
 	playerSpeed: 1,
 	physicsSteps: 5,
 	reset: reset,
@@ -21,10 +20,11 @@ const params = {
 
 let renderer, camera, scene, clock, gui, stats;
 let environment, collider, visualizer, player, controls;
+let pX = 19.133, pY = 0.724, pZ = 18.751;
 let playerIsOnGround = false;
 let fwdPressed = false, bkdPressed = false, lftPressed = false, rgtPressed = false;
 let playerVelocity = new THREE.Vector3();
-let upVector = new THREE.Vector3( 0, 1, 0 );
+let upVector = new THREE.Vector3(0, 1, 0);
 let tempVector = new THREE.Vector3();
 let tempVector2 = new THREE.Vector3();
 let tempBox = new THREE.Box3();
@@ -35,154 +35,154 @@ init();
 render();
 
 function init() {
-const bgColor = 0x263238 / 2;
+	const bgColor = 0x263238 / 2;
 
-
-// renderer setup
-renderer = new THREE.WebGLRenderer({ antialias: true });
-renderer.setPixelRatio(window.devicePixelRatio);
-renderer.setSize(window.innerWidth, window.innerHeight);
-renderer.setClearColor(bgColor, 1);
-renderer.shadowMap.enabled = true;
-renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-renderer.outputEncoding = THREE.sRGBEncoding;
-document.body.appendChild(renderer.domElement);
-
-// scene setup
-scene = new THREE.Scene();
-scene.fog = new THREE.Fog(bgColor, 20, 70);
-
-// lights
-const light = new THREE.DirectionalLight(0xf0f0f0, 1);
-light.position.set(1, 1.5, 1).multiplyScalar(50);
-light.shadow.mapSize.setScalar(2048);
-light.shadow.bias = -1e-4;
-light.shadow.normalBias = 0.05;
-light.castShadow = true;
-
-const shadowCam = light.shadow.camera;
-shadowCam.bottom = shadowCam.left = -30;
-shadowCam.top = 30;
-shadowCam.right = 45;
-
-scene.add(light);
-scene.add(new THREE.HemisphereLight(0xffffff, 0x223344, 0.4));
-
-// camera setup
-camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 50);
-camera.position.set(10, 10, 10);
-camera.far = 100;
-camera.updateProjectionMatrix();
-window.camera = camera;
-
-clock = new THREE.Clock();
-
-controls = new OrbitControls(camera, renderer.domElement);
-
-
-// controls = new PointerLockControls(camera, renderer.domElement);
-
-// document.addEventListener('click', () => {
-// 	controls.lock();
-// });
-
-// controls.addEventListener('lock', () => {
-// 	console.log('Pointer locked');
-// });
-
-// controls.addEventListener('unlock', () => {
-// 	console.log('Pointer unlocked');
-// });
-
-
-// stats setup
-stats = new Stats();
-document.body.appendChild(stats.dom);
-
-loadColliderEnvironment();
-
-// character
-player = new THREE.Mesh(
-	new RoundedBoxGeometry(1.0, 2.0, 1.0, 10, 0.5),
-	new THREE.MeshStandardMaterial()
-);
-player.geometry.translate(0, -0.5, 0);
-player.scale.set(0.1, 0.1, 0.1);  // Scale down the player model
-player.capsuleInfo = {
-	radius: 0.074,  // Adjusted radius
-	segment: new THREE.Line3(new THREE.Vector3(), new THREE.Vector3(0, -0.5, 0.0))  // Adjusted segment
-};
-player.castShadow = true;
-player.receiveShadow = true;
-player.material.shadowSide = 2;
-scene.add(player);
-reset();
-
-// dat.gui
-gui = new GUI();
-gui.add(params, 'firstPerson').onChange(v => {
-	if (!v) {
-		camera
-			.position
-			.sub(controls.target)
-			.normalize()
-			.multiplyScalar(10)
-			.add(controls.target);
-	}
-});
-
-const visFolder = gui.addFolder('Visualization');
-visFolder.add(params, 'displayCollider');
-visFolder.add(params, 'displayBVH');
-visFolder.add(params, 'visualizeDepth', 1, 20, 1).onChange(v => {
-	visualizer.depth = v;
-	visualizer.update();
-});
-visFolder.open();
-
-const physicsFolder = gui.addFolder('Player');
-physicsFolder.add(params, 'physicsSteps', 0, 30, 1);
-physicsFolder.add(params, 'gravity', -100, 100, 0.01).onChange(v => {
-	params.gravity = parseFloat(v);
-});
-physicsFolder.add(params, 'playerSpeed', 1, 20);
-physicsFolder.open();
-
-gui.add(params, 'reset');
-gui.open();
-
-window.addEventListener('resize', function () {
-	camera.aspect = window.innerWidth / window.innerHeight;
-	camera.updateProjectionMatrix();
+	// renderer setup
+	renderer = new THREE.WebGLRenderer({ antialias: true });
+	renderer.setPixelRatio(window.devicePixelRatio);
 	renderer.setSize(window.innerWidth, window.innerHeight);
-}, false);
+	renderer.setClearColor(bgColor, 1);
+	renderer.shadowMap.enabled = true;
+	renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+	renderer.outputEncoding = THREE.sRGBEncoding;
+	document.body.appendChild(renderer.domElement);
 
-window.addEventListener('keydown', function (e) {
-	switch (e.code) {
-		case 'KeyW': fwdPressed = true; break;
-		case 'KeyS': bkdPressed = true; break;
-		case 'KeyD': rgtPressed = true; break;
-		case 'KeyA': lftPressed = true; break;
-		case 'Space':
-			if (playerIsOnGround) {
-				playerVelocity.y = 10.0;
-				playerIsOnGround = false;
-			}
-			break;
-	}
-});
+	// scene setup
+	scene = new THREE.Scene();
+	scene.fog = new THREE.Fog(bgColor, 20, 70);
 
-window.addEventListener('keyup', function (e) {
-	switch (e.code) {
-		case 'KeyW': fwdPressed = false; break;
-		case 'KeyS': bkdPressed = false; break;
-		case 'KeyD': rgtPressed = false; break;
-		case 'KeyA': lftPressed = false; break;
-	}
-});
+	// lights
+	const light = new THREE.DirectionalLight(0xf0f0f0, 1);
+	light.position.set(1, 1.5, 1).multiplyScalar(50);
+	light.shadow.mapSize.setScalar(2048);
+	light.shadow.bias = -1e-4;
+	light.shadow.normalBias = 0.05;
+	light.castShadow = true;
 
+	const shadowCam = light.shadow.camera;
+	shadowCam.bottom = shadowCam.left = -30;
+	shadowCam.top = 30;
+	shadowCam.right = 45;
+
+	scene.add(light);
+	scene.add(new THREE.HemisphereLight(0xffffff, 0x223344, 0.4));
+
+	// camera setup
+	camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 50);
+	camera.position.set(10, 10, 10);
+	camera.far = 100;
+	camera.near = 0.01;
+	camera.updateProjectionMatrix();
+	window.camera = camera;
+
+	clock = new THREE.Clock();
+
+	// PointerLockControls setup
+	controls = new PointerLockControls(camera, renderer.domElement);
+
+    const blocker = document.getElementById( 'blocker' );
+    const instructions = document.getElementById( 'instructions' );
+   
+
+    
+    
+	instructions.addEventListener('click', () => {
+		controls.lock();
+	});
+
+	controls.addEventListener('lock', () => {
+		console.log('Pointer locked');
+        instructions.style.display = 'none';
+        blocker.style.display = 'none';
+	});
+
+	controls.addEventListener('unlock', () => {
+		console.log('Pointer unlocked');
+        blocker.style.display = 'block';
+        instructions.style.display = '';
+	});
+
+	// stats setup
+	stats = new Stats();
+	document.body.appendChild(stats.dom);
+
+	loadColliderEnvironment();
+
+	// character
+	player = new THREE.Mesh(
+		new RoundedBoxGeometry(1.0, 2.0, 1.0, 10, 0.5),
+		new THREE.MeshStandardMaterial()
+	);
+	player.geometry.translate(0, -0.5, 0);
+	player.scale.set(0.1, 0.1, 0.1);  // Scale down the player model
+	player.capsuleInfo = {
+		radius: 0.074,  // Adjusted radius
+		segment: new THREE.Line3(new THREE.Vector3(), new THREE.Vector3(0, -0.5, 0.0))  // Adjusted segment
+	};
+	player.castShadow = true;
+	player.receiveShadow = true;
+	player.material.shadowSide = 2;
+	scene.add(player);
+	reset();
+
+	// dat.gui
+	gui = new GUI();
+	gui.add(params, 'firstPerson').onChange(v => {
+		if (!v) {
+			camera.position.sub(controls.getObject().position).normalize().multiplyScalar(10).add(controls.getObject().position);
+		}
+	});
+
+	const visFolder = gui.addFolder('Visualization');
+	visFolder.add(params, 'displayCollider');
+	visFolder.add(params, 'displayBVH');
+	visFolder.add(params, 'visualizeDepth', 1, 20, 1).onChange(v => {
+		visualizer.depth = v;
+		visualizer.update();
+	});
+	visFolder.open();
+
+	const physicsFolder = gui.addFolder('Player');
+	physicsFolder.add(params, 'physicsSteps', 0, 30, 1);
+	physicsFolder.add(params, 'gravity', -100, 100, 0.01).onChange(v => {
+		params.gravity = parseFloat(v);
+	});
+	physicsFolder.add(params, 'playerSpeed', 1, 20);
+	physicsFolder.open();
+
+	gui.add(params, 'reset');
+	gui.open();
+
+	window.addEventListener('resize', function () {
+		camera.aspect = window.innerWidth / window.innerHeight;
+		camera.updateProjectionMatrix();
+		renderer.setSize(window.innerWidth, window.innerHeight);
+	}, false);
+
+	window.addEventListener('keydown', function (e) {
+		switch (e.code) {
+			case 'KeyW': fwdPressed = true; break;
+			case 'KeyS': bkdPressed = true; break;
+			case 'KeyD': rgtPressed = true; break;
+			case 'KeyA': lftPressed = true; break;
+			case 'Space':
+				if (playerIsOnGround) {
+					playerVelocity.y = 2.2412;
+					playerIsOnGround = false;
+				}
+				break;
+		}
+	});
+
+	window.addEventListener('keyup', function (e) {
+		switch (e.code) {
+			case 'KeyW': fwdPressed = false; break;
+			case 'KeyS': bkdPressed = false; break;
+			case 'KeyD': rgtPressed = false; break;
+			case 'KeyA': lftPressed = false; break;
+		}
+	});
 }
-
 
 function loadColliderEnvironment() {
     console.log("Loading model...");
@@ -265,7 +265,7 @@ function loadColliderEnvironment() {
             });
 
             if (visualGeometries.length) {
-                const newGeom = BufferGeometryUtils.mergeBufferGeometries(visualGeometries, false); // Merge geometries without transforming
+                const newGeom = BufferGeometryUtils.mergeGeometries(visualGeometries, false); // Merge geometries without transforming
                 const newMaterial = new THREE.MeshStandardMaterial({
                     color: parseInt(hex),
                     shadowSide: 2,
@@ -304,15 +304,12 @@ function loadColliderEnvironment() {
         const fov = camera.fov * (Math.PI / 180);
         let cameraZ = Math.abs(maxDim / 2 / Math.tan(fov / 2));
         cameraZ *= 1.5; // zoom out a little so that the model is fully visible
-        camera.position.set(center.x, center.y, cameraZ);
+        
+        camera.position.set(pX, pY, pZ);
         camera.lookAt(center);
-        controls.target.set(center.x, center.y, center.z);
-        controls.update();
 
         // Adjust the player's initial position based on the model's bounding box
-        player.position.set(center.x, center.y + size.y / 2 + player.capsuleInfo.radius, center.z);
-        controls.target.copy(player.position);
-        controls.update();
+        player.position.set(pX, pY, pZ);
 
         console.log("Environment added to scene");
     }, undefined, error => {
@@ -320,133 +317,132 @@ function loadColliderEnvironment() {
     });
 }
 
-
-
 function reset() {
-playerVelocity.set( 0, 0, 0 );
-player.position.set( 0, 1, 0);
-camera.position.sub( controls.target );
-controls.target.copy( player.position );
-camera.position.add( player.position );
-controls.update();
+	playerVelocity.set(0, 0, 0);
+	player.position.set(pX, pY, pZ);
+	camera.position.sub(player.position);
+	camera.position.add(player.position);
 }
 
-function updatePlayer( delta ) {
-if ( playerIsOnGround ) {
-playerVelocity.y = delta * params.gravity;
-} else {
-playerVelocity.y += delta * params.gravity;
-}
-
-
-
-player.position.addScaledVector( playerVelocity, delta );
-
-const angle = controls.getAzimuthalAngle();
-if ( fwdPressed ) {
-	tempVector.set( 0, 0, - 1 ).applyAxisAngle( upVector, angle );
-	player.position.addScaledVector( tempVector, params.playerSpeed * delta );
-}
-if ( bkdPressed ) {
-	tempVector.set( 0, 0, 1 ).applyAxisAngle( upVector, angle );
-	player.position.addScaledVector( tempVector, params.playerSpeed * delta );
-}
-if ( lftPressed ) {
-	tempVector.set( - 1, 0, 0 ).applyAxisAngle( upVector, angle );
-	player.position.addScaledVector( tempVector, params.playerSpeed * delta );
-}
-if ( rgtPressed ) {
-	tempVector.set( 1, 0, 0 ).applyAxisAngle( upVector, angle );
-	player.position.addScaledVector( tempVector, params.playerSpeed * delta );
-}
-
-player.updateMatrixWorld();
-
-const capsuleInfo = player.capsuleInfo;
-tempBox.makeEmpty();
-tempMat.copy( collider.matrixWorld ).invert();
-tempSegment.copy( capsuleInfo.segment );
-
-tempSegment.start.applyMatrix4( player.matrixWorld ).applyMatrix4( tempMat );
-tempSegment.end.applyMatrix4( player.matrixWorld ).applyMatrix4( tempMat );
-
-tempBox.expandByPoint( tempSegment.start );
-tempBox.expandByPoint( tempSegment.end );
-
-tempBox.min.addScalar( - capsuleInfo.radius );
-tempBox.max.addScalar( capsuleInfo.radius );
-
-collider.geometry.boundsTree.shapecast( {
-	intersectsBounds: box => box.intersectsBox( tempBox ),
-	intersectsTriangle: tri => {
-		const triPoint = tempVector;
-		const capsulePoint = tempVector2;
-		const distance = tri.closestPointToSegment( tempSegment, triPoint, capsulePoint );
-		if ( distance < capsuleInfo.radius ) {
-			const depth = capsuleInfo.radius - distance;
-			const direction = capsulePoint.sub( triPoint ).normalize();
-			tempSegment.start.addScaledVector( direction, depth );
-			tempSegment.end.addScaledVector( direction, depth );
-		}
+function updatePlayer(delta) {
+	if (playerIsOnGround) {
+		playerVelocity.y = delta * params.gravity;
+	} else {
+		playerVelocity.y += delta * params.gravity;
 	}
-} );
 
-const newPosition = tempVector;
-newPosition.copy( tempSegment.start ).applyMatrix4( collider.matrixWorld );
+	player.position.addScaledVector(playerVelocity, delta);
 
-const deltaVector = tempVector2;
-deltaVector.subVectors( newPosition, player.position );
+	const angle = controls.getObject().rotation.y;
+    // Calculate movement direction based on camera's forward vector
+    const cameraDirection = controls.getDirection(new THREE.Vector3()).clone();
 
-playerIsOnGround = deltaVector.y > Math.abs( delta * playerVelocity.y * 0.25 );
+    if (fwdPressed) {
+        tempVector.copy(cameraDirection); // Move forward along the camera's direction
+        tempVector.y = 0; // Ignore vertical component
+        player.position.addScaledVector(tempVector.normalize(), params.playerSpeed * delta);
+    }
+    if (bkdPressed) {
+        tempVector.copy(cameraDirection).negate(); // Move backward along the opposite of camera's direction
+        tempVector.y = 0; // Ignore vertical component
+        player.position.addScaledVector(tempVector.normalize(), params.playerSpeed * delta);
+    }
+    if (lftPressed) {
+        tempVector.copy(cameraDirection).applyAxisAngle(upVector, Math.PI / 2); // Move left relative to camera
+        tempVector.y = 0; // Ignore vertical component
+        player.position.addScaledVector(tempVector.normalize(), params.playerSpeed * delta);
+    }
+    if (rgtPressed) {
+        tempVector.copy(cameraDirection).applyAxisAngle(upVector, -Math.PI / 2); // Move right relative to camera
+        tempVector.y = 0; // Ignore vertical component
+        player.position.addScaledVector(tempVector.normalize(), params.playerSpeed * delta);
+    }
 
-const offset = Math.max( 0.0, deltaVector.length() - 1e-5 );
-deltaVector.normalize().multiplyScalar( offset );
+	player.updateMatrixWorld();
 
-player.position.add( deltaVector );
+	const capsuleInfo = player.capsuleInfo;
+	tempBox.makeEmpty();
+	tempMat.copy(collider.matrixWorld).invert();
+	tempSegment.copy(capsuleInfo.segment);
 
-if ( ! playerIsOnGround ) {
-	deltaVector.normalize();
-	playerVelocity.addScaledVector( deltaVector, - deltaVector.dot( playerVelocity ) );
-} else {
-	playerVelocity.set( 0, 0, 0 );
-}
+	tempSegment.start.applyMatrix4(player.matrixWorld).applyMatrix4(tempMat);
+	tempSegment.end.applyMatrix4(player.matrixWorld).applyMatrix4(tempMat);
 
-camera.position.sub( controls.target );
-controls.target.copy( player.position );
-camera.position.add( player.position );
+	tempBox.expandByPoint(tempSegment.start);
+	tempBox.expandByPoint(tempSegment.end);
 
-if ( player.position.y < - 25 ) {
-	reset();
-}
+	tempBox.min.addScalar(-capsuleInfo.radius);
+	tempBox.max.addScalar(capsuleInfo.radius);
 
+	collider.geometry.boundsTree.shapecast({
+		intersectsBounds: box => box.intersectsBox(tempBox),
+		intersectsTriangle: tri => {
+			const triPoint = tempVector;
+			const capsulePoint = tempVector2;
+			const distance = tri.closestPointToSegment(tempSegment, triPoint, capsulePoint);
+			if (distance < capsuleInfo.radius) {
+				const depth = capsuleInfo.radius - distance;
+				const direction = capsulePoint.sub(triPoint).normalize();
+				tempSegment.start.addScaledVector(direction, depth);
+				tempSegment.end.addScaledVector(direction, depth);
+			}
+		}
+	});
+
+	const newPosition = tempVector;
+	newPosition.copy(tempSegment.start).applyMatrix4(collider.matrixWorld);
+
+	const deltaVector = tempVector2;
+	deltaVector.subVectors(newPosition, player.position);
+
+	playerIsOnGround = deltaVector.y > Math.abs(delta * playerVelocity.y * 0.25);
+
+	const offset = Math.max(0.0, deltaVector.length() - 1e-5);
+	deltaVector.normalize().multiplyScalar(offset);
+
+	player.position.add(deltaVector);
+
+	if (!playerIsOnGround) {
+		deltaVector.normalize();
+		playerVelocity.addScaledVector(deltaVector, -deltaVector.dot(playerVelocity));
+	} else {
+		playerVelocity.set(0, 0, 0);
+	}
+
+	camera.position.copy(player.position);
+
+	if (player.position.y < -25) {
+		reset();
+	}
+    let str = '';
+    str += `X: ${camera.position.x.toFixed(3)}`;
+    str += ` Y: ${camera.position.y.toFixed(3)}`;
+    str += ` Z: ${camera.position.z.toFixed(3)}`;
+    toString(str);
+    document.getElementById('pp').innerHTML = str;
 }
 
 function render() {
-stats.update();
-requestAnimationFrame( render );
+	stats.update();
+	requestAnimationFrame(render);
 
-
-const delta = Math.min( clock.getDelta(), 0.1 );
-if ( params.firstPerson ) {
-	controls.maxPolarAngle = Math.PI;
-	controls.minDistance = 1e-4;
-	controls.maxDistance = 1e-4;
-} else {
-	controls.maxPolarAngle = Math.PI / 2;
-	controls.minDistance = 1;
-	controls.maxDistance = 20;
-}
-
-if ( collider ) {
-	collider.visible = params.displayCollider;
-	visualizer.visible = params.displayBVH;
-	const physicsSteps = params.physicsSteps;
-	for ( let i = 0; i < physicsSteps; i ++ ) {
-		updatePlayer( delta / physicsSteps );
+	const delta = Math.min(clock.getDelta(), 0.1);
+	if (params.firstPerson) {
+		controls.maxPolarAngle = Math.PI;
+		controls.minDistance = 1e-4;
+		controls.maxDistance = 1e-4;
 	}
+
+	if (collider) {
+		collider.visible = params.displayCollider;
+		visualizer.visible = params.displayBVH;
+		const physicsSteps = params.physicsSteps;
+		for (let i = 0; i < physicsSteps; i++) {
+			updatePlayer(delta / physicsSteps);
+		}
+	}
+
+	renderer.render(scene, camera);
+    
 }
 
-controls.update();
-renderer.render( scene, camera );
-
-}
