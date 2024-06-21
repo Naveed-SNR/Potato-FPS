@@ -13,6 +13,7 @@
 				width: 100%;
 				height: 100%;
 				background-color: rgba(0,0,0,0.5);
+				backdrop-filter: blur(11px);
 			}
 
 			#instructions {
@@ -31,11 +32,36 @@
 			#pp {
 				position: absolute;
 				bottom: 3px;
-				right: 3px;
+				right: 11px;
 				background-color: rgba(0, 0, 0, 0.542);
 				color: aqua;
 				padding: 11px;
 				border-radius: 11px;
+				width: 281px;
+				text-align: center;
+			}
+			#textBox {
+				position: absolute;
+				padding: 11px;
+				border-radius: 14.42px;
+				background-color: rgba(0, 0, 0, 0.542);
+				color: aqua;
+				bottom: 54.42px;
+				right: 11px;
+				z-index: 30;
+				width: 281px;
+				height: 210px;
+			}
+
+			.area {
+				color: aqua;
+				font-size: large;
+				font-weight: bold;
+				font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+			}
+			.description {
+				color: aqua;
+				font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 			}
     </style>
 </head>
@@ -52,8 +78,11 @@
 			</p>
 		</div>
 	</div>
-	<div id="pp">
-
+	<div id="pp"></div>
+	<div id="textBox">
+		<p class="area"></p>
+		<hr>
+		<p class="description"></p>
 	</div>
 
     <script type="module" src="./dist/bundle.js"></script>
