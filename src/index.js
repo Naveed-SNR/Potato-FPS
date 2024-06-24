@@ -6,7 +6,7 @@ import * as BufferGeometryUtils from 'three/examples/jsm/utils/BufferGeometryUti
 import Stats from 'stats.js';
 import { GUI } from 'three/examples/jsm/libs/lil-gui.module.min.js';
 import { MeshBVH, MeshBVHHelper, StaticGeometryGenerator } from 'three-mesh-bvh';
-// import { LUTCubeLoader } from 'three/examples/jsm/loaders/LUTCubeLoader.js';
+// wimport { LUTCubeLoader } from 'three/examples/jsm/loaders/LUTCubeLoader.js';
 import { LUT3dlLoader } from 'three/examples/jsm/loaders/LUT3dlLoader.js';
 import { LUTPass } from 'three/examples/jsm/postprocessing/LUTPass.js';
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
@@ -17,7 +17,7 @@ const params = {
     displayCollider: false,
     displayBVH: false,
     visualizeDepth: 10,
-    gravity: -9.8,
+    gravity: -1,
     playerSpeed: 2.1,
     physicsSteps: 11,
     reset: reset,
@@ -49,11 +49,61 @@ const coordinatesWithMessages = [
         isOffice: false
     },
     {
+        position: new THREE.Vector3(-5.868, 0.389, 9.249),
+        title: "Parking",
+        message: "For Cars",
+        isOffice: false
+    },
+    {
         position: new THREE.Vector3(-0.817, 1.299, 2.484),
         title: "This is the General Office",
-        message: "Here, you can register for the college",
+        message: "Here, you can register for the college. Press 'Esc' To open the registration form",
         isOffice: true
     },
+    {
+        position: new THREE.Vector3(2.647, 0.389, 8.590),
+        title: "Basketball court",
+        message: "Here you can play football",
+        isOffice: false
+    },
+    {
+        position: new THREE.Vector3(-4.305, 1.274, 0.684),
+        title: "Cafeteria",
+        message: "Buy or eat food (or both)",
+        isOffice: false
+    },
+    {
+        position: new THREE.Vector3(-7.211, 1.274, 2.193),
+        title: "Library",
+        message: "Read here",
+        isOffice: false
+    },
+    {
+        position: new THREE.Vector3(-6.397, 1.274, 0.625),
+        title: "Computer Lab",
+        message: "Computers here",
+        isOffice: false
+    },
+    {
+        position: new THREE.Vector3(-7.410, 1.274, 1.243),
+        title: "Classroom",
+        message: "For Students",
+        isOffice: false
+    },
+    {
+        position: new THREE.Vector3(-2.498, 1.274, 1.226),
+        title: "Classroom",
+        message: "For Students",
+        isOffice: false
+    },
+    {
+        position: new THREE.Vector3(-0.860, 1.274, 0.918),
+        title: "Staffroom",
+        message: "For Staff",
+        isOffice: false
+    },
+
+
     // Add more coordinates as needed
 ];
 
@@ -128,10 +178,11 @@ function init() {
     controls.addEventListener('unlock', () => {
         console.log('Pointer unlocked');
         blocker.style.display = 'block';
-        if (!isFormVisible) {
-            instructions.style.display = '';
-        }
+
+        instructions.style.display = '';
+
     });
+
 
     // stats setup
     stats = new Stats();
@@ -253,11 +304,6 @@ function init() {
             console.error('Failed to load LUT texture.');
         }
     });
-
-
-
-
-
     function applyLUT(apply) {
         if (apply && lutPass.lut) {
             lutPass.enabled = true;
@@ -267,10 +313,8 @@ function init() {
             console.warn('LUT not loaded or disabled.');
         }
     }
-
-
-
 }
+
 function loadLUT(filePath, onLoad) {
     const loader = new LUT3dlLoader();
     loader.load(filePath, result => {
@@ -282,28 +326,6 @@ function loadLUT(filePath, onLoad) {
         onLoad(result);
     });
 }
-
-
-
-function normalizeLUT(texture) {
-    const data = texture.image.data;
-    let maxVal = -Infinity;
-
-    for (let i = 0; i < data.length; i++) {
-        if (data[i] > maxVal) {
-            maxVal = data[i];
-        }
-    }
-
-    if (maxVal > 1) {
-        for (let i = 0; i < data.length; i++) {
-            data[i] /= maxVal;
-        }
-    }
-}
-
-
-
 
 function ensureConsistentAttributes(geometry) {
     const requiredAttributes = ['position', 'normal', 'uv', 'uv2'];
@@ -581,17 +603,17 @@ function checkCoordinatesWithMessages() {
     hideForm();
 }
 
-function createFormField(type, name, placeholder, id, autofocus = false) {
-    const input = document.createElement('input');
-    input.setAttribute('type', type);
-    input.setAttribute('name', name);
-    input.setAttribute('id', id);
-    input.setAttribute('placeholder', placeholder);
-    if (autofocus) {
-        input.setAttribute('autofocus', true);
-    }
-    return input;
-}
+// function createFormField(type, name, placeholder, id, autofocus = false) {
+//     const input = document.createElement('input');
+//     input.setAttribute('type', type);
+//     input.setAttribute('name', name);
+//     input.setAttribute('id', id);
+//     input.setAttribute('placeholder', placeholder);
+//     if (autofocus) {
+//         input.setAttribute('autofocus', true);
+//     }
+//     return input;
+// }
 
 function showTextBox(message, title) {
     const textBox = document.getElementById('textBox');
@@ -604,7 +626,12 @@ function showTextBox(message, title) {
     description.textContent = message;
 
     // Make the textBox visible
-    textBox.style.display = 'block';
+    if (controls.isLocked) {
+        textBox.style.display = 'block';
+    }
+    else {
+        hideTextBox();
+    }
 
 }
 
@@ -616,33 +643,46 @@ function hideTextBox() {
 function showForm(office) {
     let form = document.querySelector('.reg');
     if (office) {
-        // Check if the form already exists, to avoid adding duplicates  
-        form.setAttribute('action', '');
-        form.classList.add('reg');
+        // // Check if the form already exists, to avoid adding duplicates  
+        // form.setAttribute('action', '');
+        // form.classList.add('reg');
 
-        // Clear previous form fields
-        form.innerHTML = '';
-        // Create and append form fields
-        const emailField = createFormField('email', 'email', 'email', 'email', true);
-        const nameField = createFormField('text', 'name', 'Name', 'name');
-        const phoneField = createFormField('tel', 'phone', 'Phone Number', 'phone');
-        const dobField = createFormField('date', 'dob', 'Date of Birth', 'dob');
+        // // Clear previous form fields
+        // form.innerHTML = '';
+        // // Create and append form fields
+        // const emailField = createFormField('email', 'email', 'email', 'email', true);
+        // const nameField = createFormField('text', 'name', 'Name', 'name');
+        // const phoneField = createFormField('tel', 'phone', 'Phone Number', 'phone');
+        // const dobField = createFormField('date', 'dob', 'Date of Birth', 'dob');
 
-        form.appendChild(emailField);
-        form.appendChild(nameField);
-        form.appendChild(phoneField);
-        form.appendChild(dobField);
+        // form.appendChild(emailField);
+        // form.appendChild(nameField);
+        // form.appendChild(phoneField);
+        // form.appendChild(dobField);
 
-        isFormVisible = true;
+        // // Programmatically focus the first field after appending it to the DOM
+        // emailField.focus();
 
-        form.style.display = 'flex';
+        if (!controls.isLocked) {
+            form.style.display = 'block';
+            instructions.style.display = 'none';
+
+        }
+        else {
+            hideForm()
+        }
     }
 }
 
+
 function hideForm() {
     let form = document.querySelector('.reg');
+
     form.style.display = 'none';
+
     isFormVisible = false;
+
+    instructions.style.display = '';
 }
 
 function render() {

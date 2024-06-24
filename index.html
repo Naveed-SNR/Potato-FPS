@@ -71,24 +71,56 @@
 		}
 
 		.reg {
-			position: absolute;
-			top: 50px;
-			left: 20px;
+			position: fixed;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
 			padding: 10px;
 			background-color: rgba(255, 255, 255, 0.8);
-			z-index: 2;
+			z-index: 1000;
 			border-radius: 5px;
-			flex-direction: column;
+			display: none;
 		}
 
-		.reg input {
-			display: block;
-			margin-bottom: 10px;
-			padding: 5px;
-			width: 200px;
+
+		.reg input[type="email"],
+		.reg input[type="text"],
+		.reg input[type="date"],
+		.reg input[type="tel"],
+		.reg input[type="submit"] {
+			width: calc(100%);
+			padding: 10px;
+			margin-bottom: 15px;
+			border: 1px solid #ccc;
+			border-radius: 4px;
+			box-sizing: border-box;
+			/* Ensures padding and border are included in element's total width and height */
+			font-size: 16px;
 		}
 
-		.typewriter{
+		.reg input[type="submit"] {
+			background-color: #4CAF50;
+			color: white;
+			border: none;
+			cursor: pointer;
+		}
+
+		.reg input[type="submit"]:hover {
+			background-color: #45a049;
+		}
+
+		.reg input[type="email"]:focus,
+		.reg input[type="text"]:focus,
+		.reg input[type="date"]:focus,
+		.reg input[type="tel"]:focus {
+			outline: none;
+			border-color: #719ece;
+			/* Change color on focus to indicate active input */
+			box-shadow: 0 0 5px #719ece;
+			/* Optional: Add a subtle shadow on focus */
+		}
+
+		.typewriter {
 			overflow: hidden;
 			/* Ensures the content is not revealed until the animation */
 			border-right: .15em solid aqua;
@@ -111,7 +143,7 @@
 			}
 
 			to {
-				width:100%;
+				width: 100%;
 			}
 		}
 
@@ -131,32 +163,36 @@
 </head>
 
 <body>
-    <div id="blocker">
-        <div id="instructions">
-            <p style="font-size:36px">
-                Click to explore
-            </p>
-            <p>
-                Move: WASD<br />
-                Jump: SPACE<br />
-                Look: MOUSE
-            </p>
-        </div>
-    </div>
-    <div id="pp"></div>
-    <div id="textBox" class="">
-        <div>
-            <p class="area"></p>
-            <hr>
-            <p class="description typewriter"></p>
-        </div>
-    </div>
-    <form class="reg" style="display:none;">
-        <!-- Form fields will be dynamically added here -->
-    </form>
-    <button id="toggleFormButton" style="display:none;">Show Form</button>
+	<div id="blocker">
+		<div id="instructions">
+			<p style="font-size:36px">
+				Click to explore
+			</p>
+			<p>
+				Move: WASD<br />
+				Jump: SPACE<br />
+				Look: MOUSE
+			</p>
+		</div>
+	</div>
+	<div id="pp"></div>
+	<div id="textBox" class="">
+		<div>
+			<p class="area"></p>
+			<hr>
+			<p class="description typewriter"></p>
+		</div>
+	</div>
+	<form class="reg">
+		<input type="email" name="email" id="email">
+		<input type="text" name placeholder="name">
+		<input type="date" name="dob" id="dob" placeholder="Date of birth">
+		<input type="tel" name="phn" id="phn" placeholder="Phone Number">
+		<input type="submit" value="submit">
+	</form>
 
-    <script type="module" src="./dist/bundle.js"></script>
+
+	<script type="module" src="./dist/bundle.js"></script>
 </body>
 
 </html>
