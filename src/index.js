@@ -26,10 +26,10 @@ const params = {
 };
 
 
-let renderer, camera, thirdPersonCamera, scene, clock, gui, stats, composer, lutPass;
+let renderer, camera, thirdPersonCamera, scene, clock, gui, stats, composer, lutPass, footstepSound, lastFootstepTime = 0;
+const FOOTSTEP_INTERVAL = 210;
 let environment, collider, visualizer, player, controls;
 let pX = -1.1, pY = 0.452, pZ = 11;
-let isFormVisible = false;
 let playerIsOnGround = false;
 let fwdPressed = false, bkdPressed = false, lftPressed = false, rgtPressed = false;
 let playerVelocity = new THREE.Vector3();
@@ -156,6 +156,18 @@ function init() {
     thirdPersonCamera.updateProjectionMatrix();
     window.camera = camera;
 
+    //Add footsteps sound
+    const listener = new THREE.AudioListener();
+    camera.add(listener);
+
+    footstepSound = new THREE.Audio(listener);
+
+    const audioLoader = new THREE.AudioLoader();
+    audioLoader.load('./sounds/footsteps.wav', function (buffer) {
+        footstepSound.setBuffer(buffer);
+        footstepSound.setLoop(false);
+        footstepSound.setVolume(0.5);
+    });
 
     clock = new THREE.Clock();
 
@@ -327,6 +339,7 @@ function loadLUT(filePath, onLoad) {
     });
 }
 
+
 function ensureConsistentAttributes(geometry) {
     const requiredAttributes = ['position', 'normal', 'uv', 'uv2'];
     requiredAttributes.forEach(attr => {
@@ -497,8 +510,6 @@ function updatePlayer(delta) {
     }
 
     player.position.addScaledVector(playerVelocity, delta);
-
-    const angle = controls.getObject().rotation.y;
     // Calculate movement direction based on camera's forward vector
     const cameraDirection = controls.getDirection(new THREE.Vector3()).clone();
 
@@ -522,6 +533,15 @@ function updatePlayer(delta) {
         tempVector.y = 0; // Ignore vertical component
         player.position.addScaledVector(tempVector.normalize(), params.playerSpeed * delta);
     }
+
+    if (playerIsOnGround && fwdPressed || bkdPressed || lftPressed || rgtPressed) {
+        const currentTime = performance.now();
+        if (!footstepSound.isPlaying && currentTime - lastFootstepTime > FOOTSTEP_INTERVAL) {
+            footstepSound.play();
+            lastFootstepTime = currentTime;
+        }
+    }
+
 
     player.updateMatrixWorld();
 
@@ -680,7 +700,6 @@ function hideForm() {
 
     form.style.display = 'none';
 
-    isFormVisible = false;
 
     instructions.style.display = '';
 }
