@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeometry.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
 import { PointerLockControls } from 'three/examples/jsm/controls/PointerLockControls.js';
 import * as BufferGeometryUtils from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import Stats from 'stats.js';
@@ -12,6 +13,7 @@ import { LUTPass } from 'three/examples/jsm/postprocessing/LUTPass.js';
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
 
+// Update parameters
 const params = {
     firstPerson: true,
     displayCollider: false,
@@ -21,13 +23,25 @@ const params = {
     playerSpeed: 2.1,
     physicsSteps: 11,
     reset: reset,
-    applyLUT: false, // New parameter to toggle LUT
-    lutFile: './LUTS/Presetpro-Cinematic.3dl' // Path to your LUT file [ USE .3dl format for LUT]
+    lutIntensity: 0.083,
+    lutFile: 'Anime1',
+    lutOptions: {
+        None: null,
+        Anime1: './LUTS/Anime1.3dl',
+        Anime2: './LUTS/Anime2.3dl',
+        Anime3: './LUTS/Anime3.3dl',
+        Anime4: './LUTS/Anime4.3dl',
+        Anime5: './LUTS/Anime5.3dl',
+        Anime6: './LUTS/Anime6.3dl',
+        Anime7: './LUTS/Anime7.3dl',
+        Anime8: './LUTS/Anime8.3dl',
+        Cinematic: './LUTS/Cinematic.3dl'
+    }
 };
 
 
-let renderer, camera, thirdPersonCamera, scene, clock, gui, stats, composer, lutPass, footstepSound, lastFootstepTime = 0;
-const FOOTSTEP_INTERVAL = 210;
+let renderer, camera, thirdPersonCamera, scene, clock, gui, stats, composer, lutPass, openSound, closeSound, footstepSound, lastFootstepTime = 0;
+const FOOTSTEP_INTERVAL = 281;
 let environment, collider, visualizer, player, controls;
 let pX = -1.1, pY = 0.452, pZ = 11;
 let playerIsOnGround = false;
@@ -135,6 +149,10 @@ function init() {
     light.shadow.normalBias = 0.05;
     light.castShadow = true;
 
+
+    const alight = new THREE.AmbientLight(0x929292, 1);
+    scene.add(alight);
+
     const shadowCam = light.shadow.camera;
     shadowCam.bottom = shadowCam.left = -30;
     shadowCam.top = 30;
@@ -161,12 +179,24 @@ function init() {
     camera.add(listener);
 
     footstepSound = new THREE.Audio(listener);
+    openSound = new THREE.Audio(listener);
+    closeSound = new THREE.Audio(listener);
 
     const audioLoader = new THREE.AudioLoader();
     audioLoader.load('./sounds/footsteps.wav', function (buffer) {
         footstepSound.setBuffer(buffer);
         footstepSound.setLoop(false);
         footstepSound.setVolume(0.5);
+    });
+    audioLoader.load('./sounds/open.flac', function (buffer) {
+        openSound.setBuffer(buffer);
+        openSound.setLoop(false);
+        openSound.setVolume(0.5);
+    });
+    audioLoader.load('./sounds/close.flac', function (buffer) {
+        closeSound.setBuffer(buffer);
+        closeSound.setLoop(false);
+        closeSound.setVolume(0.5);
     });
 
     clock = new THREE.Clock();
@@ -245,11 +275,15 @@ function init() {
     physicsFolder.open();
 
     const lutFolder = gui.addFolder('LUT');
-    lutFolder.add(params, 'applyLUT').onChange(applyLUT);
+    lutFolder.add(params, 'lutFile', Object.keys(params.lutOptions)).name('Select LUT').onChange(loadSelectedLUT);
+    lutFolder.add(params, 'lutIntensity', 0, 1, 0.001).name('LUT Intensity').onChange(updateLUTIntensity);
     lutFolder.open();
 
     gui.add(params, 'reset');
     gui.open();
+
+    // Load the default LUT
+    loadSelectedLUT(params.lutFile);
 
     window.addEventListener('resize', function () {
         camera.aspect = window.innerWidth / window.innerHeight;
@@ -293,6 +327,7 @@ function init() {
     lutPass = new LUTPass();
 
     composer = new EffectComposer(renderer);
+    lutPass.uniforms.intensity = { value: params.lutIntensity };
     composer.addPass(renderPass);
     composer.addPass(lutPass);
     lutPass.enabled = false; // Initially disable LUT pass
@@ -316,15 +351,7 @@ function init() {
             console.error('Failed to load LUT texture.');
         }
     });
-    function applyLUT(apply) {
-        if (apply && lutPass.lut) {
-            lutPass.enabled = true;
-            console.log('LUT applied:', lutPass.lut);
-        } else {
-            lutPass.enabled = false;
-            console.warn('LUT not loaded or disabled.');
-        }
-    }
+
 }
 
 function loadLUT(filePath, onLoad) {
@@ -337,6 +364,37 @@ function loadLUT(filePath, onLoad) {
         lutTexture.encoding = THREE.LinearEncoding; // Ensure the encoding is linear
         onLoad(result);
     });
+}
+
+function loadSelectedLUT(lutKey) {
+    const lutFile = params.lutOptions[lutKey];
+    if (lutFile) {
+        loadLUT(lutFile, result => {
+            if (result.texture3D || result.texture) {
+                const lutTexture = result.texture3D || result.texture;
+                lutTexture.minFilter = THREE.LinearFilter;
+                lutTexture.magFilter = THREE.LinearFilter;
+                lutTexture.generateMipmaps = false;
+                lutTexture.encoding = THREE.LinearEncoding;
+
+                lutPass.lut = lutTexture;
+                lutPass.enabled = true;
+                console.log('LUT texture loaded:', lutTexture);
+            } else {
+                console.error('Failed to load LUT texture.');
+                lutPass.enabled = false;
+            }
+        });
+    } else {
+        lutPass.enabled = false;
+    }
+}
+
+function updateLUTIntensity(intensity) {
+    if (lutPass.enabled && lutPass.lut) {
+        lutPass.uniforms.intensity.value = intensity;
+        // console.log('LUT intensity updated:', intensity);
+    }
 }
 
 
@@ -359,6 +417,9 @@ function loadColliderEnvironment() {
     console.log("Loading model...");
 
     const loader = new GLTFLoader();
+    const dracoLoader = new DRACOLoader();
+    dracoLoader.setDecoderPath('three/examples/js/libs/draco/'); // Set the path to the Draco decoder files
+    loader.setDRACOLoader(dracoLoader);
     loader.load('./models/hs/hs.glb', res => {
         console.log("Model loaded", res);
 
@@ -534,10 +595,10 @@ function updatePlayer(delta) {
         player.position.addScaledVector(tempVector.normalize(), params.playerSpeed * delta);
     }
 
-    if (playerIsOnGround && fwdPressed || bkdPressed || lftPressed || rgtPressed) {
+    if (playerIsOnGround && (fwdPressed || bkdPressed || lftPressed || rgtPressed)) {
         const currentTime = performance.now();
         if (!footstepSound.isPlaying && currentTime - lastFootstepTime > FOOTSTEP_INTERVAL) {
-            footstepSound.play();
+            footstepSound.play(0.1);
             lastFootstepTime = currentTime;
         }
     }
@@ -638,27 +699,30 @@ function checkCoordinatesWithMessages() {
 function showTextBox(message, title) {
     const textBox = document.getElementById('textBox');
 
-    // Update the heading and description using approach 2
+    // Update the heading and description
     const heading = document.querySelector('.area');
     heading.textContent = title;
 
     const description = document.querySelector('.description');
     description.textContent = message;
 
-    // Make the textBox visible
-    if (controls.isLocked) {
+    // Make the textBox visible and play the open sound if it's not already visible
+    if (controls.isLocked && textBox.style.display !== 'block') {
         textBox.style.display = 'block';
+        openSound.play();
     }
-    else {
-        hideTextBox();
-    }
-
 }
 
 function hideTextBox() {
     const textBox = document.getElementById('textBox');
-    textBox.style.display = 'none';
+
+    // Hide the textBox and play the close sound if it's currently visible
+    if (textBox.style.display === 'block') {
+        textBox.style.display = 'none';
+        closeSound.play();
+    }
 }
+
 
 function showForm(office) {
     let form = document.querySelector('.reg');
