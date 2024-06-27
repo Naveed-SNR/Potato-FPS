@@ -19,7 +19,7 @@ const params = {
     displayCollider: false,
     displayBVH: false,
     visualizeDepth: 10,
-    gravity: -1,
+    gravity: -9.8,
     playerSpeed: 2.1,
     physicsSteps: 11,
     reset: reset,
@@ -41,7 +41,7 @@ const params = {
 
 
 let renderer, camera, thirdPersonCamera, scene, clock, gui, stats, composer, lutPass, openSound, closeSound, footstepSound, lastFootstepTime = 0;
-const FOOTSTEP_INTERVAL = 281;
+const FOOTSTEP_INTERVAL = 300;
 let environment, collider, visualizer, player, controls;
 let pX = -1.1, pY = 0.452, pZ = 11;
 let playerIsOnGround = false;
@@ -150,7 +150,8 @@ function init() {
     light.castShadow = true;
 
 
-    const alight = new THREE.AmbientLight(0x929292, 1);
+    //Ambient Light
+    const alight = new THREE.AmbientLight(0x909090, 1);
     scene.add(alight);
 
     const shadowCam = light.shadow.camera;
