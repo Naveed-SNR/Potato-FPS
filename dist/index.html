@@ -137,13 +137,20 @@
 			color: #00FFFF; /* Neon blue */
 			text-align: left;
 		}
+		.formheading {
+			text-align: center;
+			width: calc(100%);
+			padding: 11px;
+			color: #00FFFF; /* Neon blue */
+			text-shadow: 0 0 1px #00FFFF, 0 0 3px #00FFFF; 
+		}
 		
 		.reg {
 			position: fixed;
 			top: 50%;
 			left: 50%;
 			transform: translate(-50%, -50%);
-			padding: 10px;
+			padding: 21px;
 			background-color: rgba(17, 17, 17, 0.8);
 			z-index: 1000;
 			border-radius: 11px;
@@ -214,7 +221,7 @@
 			50% {
 				border-color: #00FFFF;
 			}
-		}</style><script defer="defer" src="bundle.js"></script></head><body><div id="blocker"><div id="instructions"><div class="branding" id="branding"><span>C</span><span>O</span><span>L</span><span>L</span><span>E</span><span>G</span><span>E</span><span>&nbsp;&nbsp;</span><span>I</span><span>O</span></div><p style="font-size:36px">Click to explore</p><p>Move: WASD<br/>Jump: SPACE<br/>Look: MOUSE</p></div></div><div id="pp"></div><div id="textBox" class=""><div><p class="area"></p><hr><p class="description typewriter"></p></div></div><form class="reg"><input type="email" name="email" id="email"> <input name placeholder="name"> <input type="date" name="dob" id="dob" placeholder="Date of birth"> <input type="tel" name="phn" id="phn" placeholder="Phone Number"> <input type="submit" value="submit"></form><div id="feedbackPrompt" style="display: none;"><p>Do you like the college?</p><button id="yesButton">Yes</button> <button id="noButton">No</button></div><script type="module" src="./dist/bundle.js"></script><script>document.addEventListener('DOMContentLoaded', () => {
+		}</style><script defer="defer" src="bundle.js"></script></head><body><div id="blocker"><div id="instructions"><div class="branding" id="branding"><span>C</span><span>O</span><span>L</span><span>L</span><span>E</span><span>G</span><span>E</span><span>&nbsp;&nbsp;</span><span>I</span><span>O</span></div><p style="font-size:36px">Click to explore</p><p>Move: WASD<br/>Jump: SPACE<br/>Look: MOUSE</p></div></div><div id="pp"></div><div id="textBox" class=""><div><p class="area"></p><hr><p class="description typewriter"></p></div></div><form class="reg"><div class="formheading">Click outstide to close</div><input type="email" name="email" id="email"> <input name placeholder="name"> <input type="date" name="dob" id="dob" placeholder="Date of birth"> <input type="tel" name="phn" id="phn" placeholder="Phone Number"> <input type="submit" value="submit"></form><div id="feedbackPrompt" style="display: none;"><p>Do you like the college?</p><button id="yesButton">Yes</button> <button id="noButton">No</button></div><script type="module" src="./dist/bundle.js"></script><script>document.addEventListener('DOMContentLoaded', () => {
 			const branding = document.getElementById('branding');
 			const letters = branding.querySelectorAll('span');
 			letters.forEach((letter, index) => {
