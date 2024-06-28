@@ -2,7 +2,7 @@
 <html>
 
 <head>
-	<title>three-mesh-bvh - Character Movement</title>
+	<title>College IO</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
 	<style type="text/css">
@@ -64,6 +64,22 @@
 			text-shadow: 2px 2px 5px rgba(0, 0, 0, 1);
 			transform: perspective(500px) rotateX(20deg);
 		}
+
+
+		#feedbackPrompt {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    border: 1px solid black;
+    padding: 20px;
+    z-index: 1000;
+}
+
+#feedbackPrompt button {
+    margin: 10px;
+}
 
 
 		#pp {
@@ -193,6 +209,8 @@
 				border-color: aqua;
 			}
 		}
+
+
 	</style>
 </head>
 
@@ -229,6 +247,12 @@
 		<input type="submit" value="submit">
 	</form>
 
+	<div id="feedbackPrompt" style="display: none;">
+		<p>Do you like the college?</p>
+		<button id="yesButton">Yes</button>
+		<button id="noButton">No</button>
+	</div>
+	
 
 	<script type="module" src="./dist/bundle.js"></script>
 	<script>
