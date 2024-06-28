@@ -58,13 +58,13 @@ or build using
 
 Here's a glimpse of what Potato-FPS looks like:
 
-![Screenshot 1](./screenshots/1)
+![Screenshot 1](./screenshots/1.png)
 *Instructions*
 
-![Screenshot 2](./screenshots/2)
+![Screenshot 2](./screenshots/2.png)
 *Environment*
 
-![Screenshot 3](./screenshots/3)
+![Screenshot 3](./screenshots/3.png)
 *Registration Form*
 <!-- 
 ## Contributing
