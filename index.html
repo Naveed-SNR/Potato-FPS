@@ -7,52 +7,59 @@
 	<style>
 		body {
 			margin: 0;
-			background-color: #0d0d0d; /* Dark background */
-			font-family: 'Orbitron', sans-serif; /* Sci-fi font */
+			background-color: #0d0d0d;
+			/* Dark background */
+			font-family: 'Orbitron', sans-serif;
+			/* Sci-fi font */
 		}
-		
+
 		#blocker {
 			position: absolute;
+			display: flex;
 			width: 100%;
 			height: 100%;
 			background-color: rgba(0, 0, 0, 0.9);
 			backdrop-filter: blur(11px);
 		}
-		
+
 		#instructions {
 			width: 100%;
 			height: 100%;
-			color: #00FFFF; /* Neon blue */
+			color: #00FFFF;
+			/* Neon blue */
 			display: flex;
-			flex-direction: column;
+			margin: 0 3% 0 3%;
 			justify-content: center;
 			align-items: center;
 			text-align: center;
 			font-size: 14px;
 			cursor: pointer;
-			text-shadow: 0 0 5px #00FFFF, 0 0 10px #00FFFF; /* Glowing text */
+			text-shadow: 0 0 5px #00FFFF, 0 0 10px #00FFFF;
+			/* Glowing text */
 		}
-		
+
 		@keyframes slideDown {
 			0% {
 				transform: translateY(-100%);
 				opacity: 0;
 			}
+
 			100% {
 				transform: translateY(0);
 				opacity: 1;
 			}
 		}
-		
+
 		.branding {
 			position: absolute;
 			top: 11%;
 			z-index: 21;
 			display: flex;
-			font-family: 'Orbitron', sans-serif; /* Sci-fi font */
+			font-family: 'Orbitron', sans-serif;
+			/* Sci-fi font */
 			font-weight: bold;
 		}
-		
+
 		.branding span {
 			display: inline-block;
 			opacity: 0;
@@ -60,23 +67,35 @@
 			animation: slideDown 0.3s steps(30) forwards;
 			font-size: 111px;
 			font-weight: bold;
-			color: #00FFFF; /* Neon blue */
-			text-shadow: 0 0 10px #00FFFF, 0 0 20px #00FFFF; /* Glowing text */
+			color: #00FFFF;
+			/* Neon blue */
+			text-shadow: 0 0 10px #00FFFF, 0 0 20px #00FFFF;
+			/* Glowing text */
 			transform: perspective(500px) rotateX(20deg);
+		}
+
+		.control-info {
+			text-align: left;
+			border-right: 1px solid #00FFFF;
+			margin-right: 45.02vh;
+			padding-right:  83px;
 		}
 
 		.lil-gui.root {
 			background-color: rgba(0, 0, 0, 0.3);
 			margin: 11px;
 			position: fixed;
+			top: 32.42%;
+			right: 24.41%;
 		}
-		
+
 		.lil-gui {
 			border-radius: 3px;
 			background-color: rgba(0, 0, 0, 0.3);
 			color: #00FFFF;
-			text-shadow: 0 0 1px #00FFFF, 0 0 11px #00FFFF; 
+			text-shadow: 0 0 1px #00FFFF, 0 0 11px #00FFFF;
 		}
+
 		div.tilte {
 			background-color: rgba(0, 0, 0, 0.3);
 			border-radius: 3px;
@@ -86,6 +105,7 @@
 			background-color: #1d1d1d;
 
 		}
+
 		.lil-gui .controller.option select {
 			background-color: #1d1d1d;
 		}
@@ -93,15 +113,15 @@
 
 		.lil-gui input {
 			background-color: #1d1d1d;
-			text-shadow: 0 0 1px #00FFFF, 0 0 3px #00FFFF; 
+			text-shadow: 0 0 1px #00FFFF, 0 0 3px #00FFFF;
 
 		}
 
 		.lil-gui button {
 			background-color: #1d1d1d;
 			color: #00FFFF;
-			text-shadow: 0 0 1px #00FFFF, 0 0 3px #00FFFF; 
-			box-shadow: 0 0 1px #00FFFF; 
+			text-shadow: 0 0 1px #00FFFF, 0 0 3px #00FFFF;
+			box-shadow: 0 0 1px #00FFFF;
 		}
 
 		#pp {
@@ -109,49 +129,57 @@
 			top: 3px;
 			right: 11px;
 			background-color: rgba(0, 0, 0, 0.74);
-			color: #00FFFF; /* Neon blue */
+			color: #00FFFF;
+			/* Neon blue */
 			padding: 11px;
 			border-radius: 11px;
 			width: 281px;
 			text-align: center;
-			box-shadow: 0 0 10px #00FFFF; /* Glowing box shadow */
+			box-shadow: 0 0 10px #00FFFF;
+			/* Glowing box shadow */
 			display: none;
 		}
 
-		
-		#textBox  {
+
+		#textBox {
 			display: none;
 			position: absolute;
 			padding: 11px;
 			border-radius: 14.42px;
 			background-color: rgba(0, 0, 0, 0.74);
-			color: #00FFFF; /* Neon blue */
+			color: #00FFFF;
+			/* Neon blue */
 			bottom: 11px;
 			right: 11px;
 			z-index: 30;
 			width: 281px;
 			height: 210px;
-			box-shadow: 0 0 10px #00FFFF; /* Glowing box shadow */
+			box-shadow: 0 0 10px #00FFFF;
+			/* Glowing box shadow */
 		}
-		
+
 		.area {
-			color: #00FFFF; /* Neon blue */
+			color: #00FFFF;
+			/* Neon blue */
 			font-size: large;
 			font-weight: bold;
 		}
-		
+
 		.description {
-			color: #00FFFF; /* Neon blue */
+			color: #00FFFF;
+			/* Neon blue */
 			text-align: left;
 		}
+
 		.formheading {
 			text-align: center;
 			width: calc(100%);
 			padding: 11px;
-			color: #00FFFF; /* Neon blue */
-			text-shadow: 0 0 1px #00FFFF, 0 0 3px #00FFFF; 
+			color: #00FFFF;
+			/* Neon blue */
+			text-shadow: 0 0 1px #00FFFF, 0 0 3px #00FFFF;
 		}
-		
+
 		.reg {
 			position: fixed;
 			top: 50%;
@@ -162,9 +190,10 @@
 			z-index: 1000;
 			border-radius: 11px;
 			display: none;
-			box-shadow: 0 0 10px #00FFFF; /* Glowing box shadow */
+			box-shadow: 0 0 10px #00FFFF;
+			/* Glowing box shadow */
 		}
-		
+
 		.reg input[type="email"],
 		.reg input[type="text"],
 		.reg input[type="date"],
@@ -178,59 +207,69 @@
 			box-sizing: border-box;
 			font-size: 16px;
 			background-color: #0d0d0d;
-			color: #00FFFF; /* Neon blue */
+			color: #00FFFF;
+			/* Neon blue */
 		}
-		
+
 		.reg input[type="submit"] {
-			background-color: #00FFFF; /* Neon blue */
+			background-color: #00FFFF;
+			/* Neon blue */
 			color: #0d0d0d;
 			border: none;
 			cursor: pointer;
-			box-shadow: 0 0 10px #00FFFF; /* Glowing box shadow */
+			box-shadow: 0 0 10px #00FFFF;
+			/* Glowing box shadow */
 		}
-		
+
 		.reg input[type="submit"]:hover {
-			background-color: #00cccc; /* Lighter neon blue on hover */
+			background-color: #00cccc;
+			/* Lighter neon blue on hover */
 		}
-		
+
 		.reg input[type="email"]:focus,
 		.reg input[type="text"]:focus,
 		.reg input[type="date"]:focus,
 		.reg input[type="tel"]:focus {
 			outline: none;
-			border-color: #00cccc; /* Lighter neon blue on focus */
-			box-shadow: 0 0 5px #00cccc; /* Glowing effect on focus */
+			border-color: #00cccc;
+			/* Lighter neon blue on focus */
+			box-shadow: 0 0 5px #00cccc;
+			/* Glowing effect on focus */
 		}
-		
+
 		.typewriter {
 			overflow: hidden;
-			border-right: .15em solid #00FFFF; /* Neon blue cursor */
+			border-right: .15em solid #00FFFF;
+			/* Neon blue cursor */
 			white-space: nowrap;
 			margin: 0 auto;
 			letter-spacing: .03em;
 			animation: typing 2.1s steps(30, end), blink-caret .75s step-end infinite;
 		}
-		
+
 		@keyframes typing {
 			from {
 				width: 0
 			}
+
 			to {
 				width: 100%;
 			}
 		}
-		
+
 		@keyframes blink-caret {
+
 			from,
 			to {
 				border-color: transparent
 			}
+
 			50% {
 				border-color: #00FFFF;
 			}
 		}
-		</style>
-		
+	</style>
+
 </head>
 
 <body>
@@ -239,15 +278,18 @@
 			<div class="branding" id="branding">
 				<span>C</span><span>O</span><span>L</span><span>L</span><span>E</span><span>G</span><span>E</span><span>&nbsp;&nbsp;</span><span>I</span><span>O</span>
 			</div>
-			
-			<p style="font-size:36px">
-				Click to explore
-			</p>
-			<p>
-				Move: WASD<br />
-				Jump: SPACE<br />
-				Look: MOUSE
-			</p>
+
+	
+				<div class="control-info">
+					<p style="font-size:45.02px; margin: 0 30px 30px 0;">
+						Click to explore
+					</p>
+					<p style="font-size: medium; margin: 0 30px 21px 0;">&nbsp;Use WASD to move</p>
+					<p style="font-size: medium; margin: 0 30px 21px 0;">&nbsp;Use 'Space' to jump</p>
+					<p style="font-size: medium; margin: 0 30px 21px 0;">&nbsp;Use Mouse to look around</p>
+					<p style="font-size: medium; margin: 0 30px 21px 0;">&nbsp;Go to the General Office for registration</p>
+				</div>
+	
 		</div>
 	</div>
 	<div id="pp"></div>
@@ -267,12 +309,6 @@
 		<input type="submit" value="submit">
 	</form>
 
-	<div id="feedbackPrompt" style="display: none;">
-		<p>Do you like the college?</p>
-		<button id="yesButton">Yes</button>
-		<button id="noButton">No</button>
-	</div>
-	
 
 	<script type="module" src="./dist/bundle.js"></script>
 	<script>

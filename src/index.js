@@ -226,7 +226,7 @@ function init() {
         document.getElementById('textBox').style.display = 'none';
         console.log('Pointer unlocked');
         blocker.style.display = 'block';
-        instructions.style.display = '';
+        instructions.style.display = 'flex';
         gui.show();
         
 
@@ -315,10 +315,10 @@ function init() {
                     break;
                     case 'KeyR': 
                         controls.unlock();
-                        fwdPressed = false;
-                        bkdPressed = false;
-                        rgtPressed = false;
-                        lftPressed = false;
+                            fwdPressed = false;
+                            bkdPressed = false;
+                            rgtPressed = false;
+                            lftPressed = false;
                         showForm(true); 
                         break;
                 }
@@ -754,7 +754,7 @@ function showForm(office) {
         if (!controls.isLocked) {
             form.style.display = 'block';
             instructions.style.display = 'none';
-
+            gui.hide();
         }
         else {
             hideForm()
