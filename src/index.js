@@ -213,16 +213,22 @@ function init() {
     });
 
     controls.addEventListener('lock', () => {
+        document.getElementById('pp').style.display = 'block';
+        document.getElementById('textBox').style.display = 'block';
         console.log('Pointer locked');
         instructions.style.display = 'none';
         blocker.style.display = 'none';
+        gui.hide();
     });
 
     controls.addEventListener('unlock', () => {
+        document.getElementById('pp').style.display = 'none';
+        document.getElementById('textBox').style.display = 'none';
         console.log('Pointer unlocked');
         blocker.style.display = 'block';
-
         instructions.style.display = '';
+        gui.show();
+        
 
     });
 
@@ -257,6 +263,7 @@ function init() {
             thirdPersonCamera.position.sub(controls.getObject().position).normalize().multiplyScalar(10).add(controls.getObject().position);
         }
     });
+    
 
     const visFolder = gui.addFolder('Visualization');
     visFolder.add(params, 'displayCollider');
@@ -281,8 +288,7 @@ function init() {
     lutFolder.open();
 
     gui.add(params, 'reset');
-    gui.open();
-
+ 
     // Load the default LUT
     loadSelectedLUT(params.lutFile);
 
@@ -307,7 +313,15 @@ function init() {
                         playerIsOnGround = false;
                     }
                     break;
-            }
+                    case 'KeyR': 
+                        controls.unlock();
+                        fwdPressed = false;
+                        bkdPressed = false;
+                        rgtPressed = false;
+                        lftPressed = false;
+                        showForm(true); 
+                        break;
+                }
         }
     });
 
@@ -674,30 +688,31 @@ function updatePlayer(delta) {
 function checkCoordinatesWithMessages() {
     const playerPosition = player.position;
 
+    // Define the thresholds for x, y, and z axes
+    const thresholdX = 1.1;
+    const thresholdY = 0.1;
+    const thresholdZ = 1.1;
+
     for (const coord of coordinatesWithMessages) {
-        if (playerPosition.distanceTo(coord.position) < 1.1) { // Adjust the distance threshold as needed
+        const coordPosition = coord.position;
+        
+        // Check if the player is within the threshold on all axes
+        const isWithinX = Math.abs(playerPosition.x - coordPosition.x) < thresholdX;
+        const isWithinY = Math.abs(playerPosition.y - coordPosition.y) < thresholdY;
+        const isWithinZ = Math.abs(playerPosition.z - coordPosition.z) < thresholdZ;
+        
+        if (isWithinX && isWithinY && isWithinZ) {
             showTextBox(coord.message, coord.title);
             showForm(coord.isOffice);
             return; // Exit once we find the first matching coordinate
         }
     }
+
     hideTextBox(); // Hide the text box if the player is not at any specific coordinate
-    hideForm();
+    // hideForm();
 }
 
-// function createFormField(type, name, placeholder, id, autofocus = false) {
-//     const input = document.createElement('input');
-//     input.setAttribute('type', type);
-//     input.setAttribute('name', name);
-//     input.setAttribute('id', id);
-//     input.setAttribute('placeholder', placeholder);
-//     if (autofocus) {
-//         input.setAttribute('autofocus', true);
-//     }
-//     return input;
-// }
-
-function showTextBox(message, title) {
+function showTextBox(message, title, office) {
     const textBox = document.getElementById('textBox');
 
     // Update the heading and description
@@ -712,6 +727,11 @@ function showTextBox(message, title) {
         textBox.style.display = 'block';
         openSound.play();
     }
+    if (!controls.isLocked) {
+        textBox.style.display = 'none';
+    }
+
+
 }
 
 function hideTextBox() {
@@ -726,28 +746,11 @@ function hideTextBox() {
 
 
 function showForm(office) {
+    
     let form = document.querySelector('.reg');
+   
     if (office) {
-        // // Check if the form already exists, to avoid adding duplicates  
-        // form.setAttribute('action', '');
-        // form.classList.add('reg');
-
-        // // Clear previous form fields
-        // form.innerHTML = '';
-        // // Create and append form fields
-        // const emailField = createFormField('email', 'email', 'email', 'email', true);
-        // const nameField = createFormField('text', 'name', 'Name', 'name');
-        // const phoneField = createFormField('tel', 'phone', 'Phone Number', 'phone');
-        // const dobField = createFormField('date', 'dob', 'Date of Birth', 'dob');
-
-        // form.appendChild(emailField);
-        // form.appendChild(nameField);
-        // form.appendChild(phoneField);
-        // form.appendChild(dobField);
-
-        // // Programmatically focus the first field after appending it to the DOM
-        // emailField.focus();
-
+        
         if (!controls.isLocked) {
             form.style.display = 'block';
             instructions.style.display = 'none';
@@ -757,6 +760,7 @@ function showForm(office) {
             hideForm()
         }
     }
+
 }
 
 

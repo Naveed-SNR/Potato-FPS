@@ -1,50 +1,51 @@
 <!doctype html><html><head><title>College IO</title><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><style>body {
 			margin: 0;
+			background-color: #0d0d0d; /* Dark background */
+			font-family: 'Orbitron', sans-serif; /* Sci-fi font */
 		}
-
+		
 		#blocker {
 			position: absolute;
 			width: 100%;
 			height: 100%;
-			background-color: rgba(0, 0, 0, 0.5);
+			background-color: rgba(0, 0, 0, 0.9);
 			backdrop-filter: blur(11px);
 		}
-
+		
 		#instructions {
 			width: 100%;
 			height: 100%;
-			color: aqua;
+			color: #00FFFF; /* Neon blue */
 			display: flex;
 			flex-direction: column;
 			justify-content: center;
 			align-items: center;
-			font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 			text-align: center;
 			font-size: 14px;
 			cursor: pointer;
+			text-shadow: 0 0 5px #00FFFF, 0 0 10px #00FFFF; /* Glowing text */
 		}
-
+		
 		@keyframes slideDown {
 			0% {
 				transform: translateY(-100%);
 				opacity: 0;
 			}
-
 			100% {
 				transform: translateY(0);
 				opacity: 1;
 			}
 		}
-
+		
 		.branding {
 			position: absolute;
 			top: 11%;
 			z-index: 21;
-			font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-			font-weight: bold;
 			display: flex;
+			font-family: 'Orbitron', sans-serif; /* Sci-fi font */
+			font-weight: bold;
 		}
-
+		
 		.branding span {
 			display: inline-block;
 			opacity: 0;
@@ -52,79 +53,104 @@
 			animation: slideDown 0.3s steps(30) forwards;
 			font-size: 111px;
 			font-weight: bold;
-			color: aqua;
-			text-shadow: 2px 2px 5px rgba(0, 0, 0, 1);
+			color: #00FFFF; /* Neon blue */
+			text-shadow: 0 0 10px #00FFFF, 0 0 20px #00FFFF; /* Glowing text */
 			transform: perspective(500px) rotateX(20deg);
 		}
 
+		.lil-gui.root {
+			background-color: rgba(0, 0, 0, 0.3);
+			margin: 11px;
+			position: fixed;
+		}
+		
+		.lil-gui {
+			border-radius: 3px;
+			background-color: rgba(0, 0, 0, 0.3);
+			color: #00FFFF;
+			text-shadow: 0 0 1px #00FFFF, 0 0 11px #00FFFF; 
+		}
+		div.tilte {
+			background-color: rgba(0, 0, 0, 0.3);
+			border-radius: 3px;
+		}
 
-		#feedbackPrompt {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: white;
-    border: 1px solid black;
-    padding: 20px;
-    z-index: 1000;
-}
+		.lil-gui .controller.number .slider {
+			background-color: #1d1d1d;
 
-#feedbackPrompt button {
-    margin: 10px;
-}
+		}
+		.lil-gui .controller.option select {
+			background-color: #1d1d1d;
+		}
 
+
+		.lil-gui input {
+			background-color: #1d1d1d;
+			text-shadow: 0 0 1px #00FFFF, 0 0 3px #00FFFF; 
+
+		}
+
+		.lil-gui button {
+			background-color: #1d1d1d;
+			color: #00FFFF;
+			text-shadow: 0 0 1px #00FFFF, 0 0 3px #00FFFF; 
+			box-shadow: 0 0 1px #00FFFF; 
+		}
 
 		#pp {
 			position: absolute;
-			bottom: 3px;
+			top: 3px;
 			right: 11px;
-			background-color: rgba(0, 0, 0, 0.542);
-			color: aqua;
+			background-color: rgba(0, 0, 0, 0.74);
+			color: #00FFFF; /* Neon blue */
 			padding: 11px;
 			border-radius: 11px;
 			width: 281px;
 			text-align: center;
+			box-shadow: 0 0 10px #00FFFF; /* Glowing box shadow */
+			display: none;
 		}
 
-		#textBox>div {
+		
+		#textBox  {
+			display: none;
 			position: absolute;
 			padding: 11px;
 			border-radius: 14.42px;
-			background-color: rgba(0, 0, 0, 0.542);
-			color: aqua;
-			bottom: 54.42px;
+			background-color: rgba(0, 0, 0, 0.74);
+			color: #00FFFF; /* Neon blue */
+			bottom: 11px;
 			right: 11px;
 			z-index: 30;
 			width: 281px;
 			height: 210px;
+			box-shadow: 0 0 10px #00FFFF; /* Glowing box shadow */
 		}
-
+		
 		.area {
-			color: aqua;
+			color: #00FFFF; /* Neon blue */
 			font-size: large;
 			font-weight: bold;
-			font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 		}
-
+		
 		.description {
-			color: aqua;
-			font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+			color: #00FFFF; /* Neon blue */
 			text-align: left;
 		}
-
+		
 		.reg {
 			position: fixed;
 			top: 50%;
 			left: 50%;
 			transform: translate(-50%, -50%);
 			padding: 10px;
-			background-color: rgba(255, 255, 255, 0.8);
+			background-color: rgba(17, 17, 17, 0.8);
 			z-index: 1000;
-			border-radius: 5px;
+			border-radius: 11px;
 			display: none;
+			box-shadow: 0 0 10px #00FFFF; /* Glowing box shadow */
 		}
-
-
+		
 		.reg input[type="email"],
 		.reg input[type="text"],
 		.reg input[type="date"],
@@ -133,74 +159,62 @@
 			width: calc(100%);
 			padding: 10px;
 			margin-bottom: 15px;
-			border: 1px solid #ccc;
+			border: 1px solid #00FFFF;
 			border-radius: 4px;
 			box-sizing: border-box;
-			/* Ensures padding and border are included in element's total width and height */
 			font-size: 16px;
+			background-color: #0d0d0d;
+			color: #00FFFF; /* Neon blue */
 		}
-
+		
 		.reg input[type="submit"] {
-			background-color: #4CAF50;
-			color: white;
+			background-color: #00FFFF; /* Neon blue */
+			color: #0d0d0d;
 			border: none;
 			cursor: pointer;
+			box-shadow: 0 0 10px #00FFFF; /* Glowing box shadow */
 		}
-
+		
 		.reg input[type="submit"]:hover {
-			background-color: #45a049;
+			background-color: #00cccc; /* Lighter neon blue on hover */
 		}
-
+		
 		.reg input[type="email"]:focus,
 		.reg input[type="text"]:focus,
 		.reg input[type="date"]:focus,
 		.reg input[type="tel"]:focus {
 			outline: none;
-			border-color: #719ece;
-			/* Change color on focus to indicate active input */
-			box-shadow: 0 0 5px #719ece;
-			/* Optional: Add a subtle shadow on focus */
+			border-color: #00cccc; /* Lighter neon blue on focus */
+			box-shadow: 0 0 5px #00cccc; /* Glowing effect on focus */
 		}
-
+		
 		.typewriter {
 			overflow: hidden;
-			/* Ensures the content is not revealed until the animation */
-			border-right: .15em solid aqua;
-			/* The typwriter cursor */
+			border-right: .15em solid #00FFFF; /* Neon blue cursor */
 			white-space: nowrap;
-			/* Keeps the content on a single line */
 			margin: 0 auto;
-			/* Gives that scrolling effect as the typing happens */
 			letter-spacing: .03em;
-			/* Adjust as needed */
-			animation:
-				typing 2.1s steps(30, end),
-				blink-caret .75s step-end infinite;
+			animation: typing 2.1s steps(30, end), blink-caret .75s step-end infinite;
 		}
-
-		/* The typing effect */
+		
 		@keyframes typing {
 			from {
 				width: 0
 			}
-
 			to {
 				width: 100%;
 			}
 		}
-
-		/* The typewriter cursor effect */
+		
 		@keyframes blink-caret {
-
 			from,
 			to {
 				border-color: transparent
 			}
-
 			50% {
-				border-color: aqua;
+				border-color: #00FFFF;
 			}
-		}</style><script defer="defer" src="bundle.js"></script></head><body><div id="blocker"><div id="instructions"><div class="branding" id="branding"><span>C</span><span>O</span><span>L</span><span>L</span><span>E</span><span>G</span><span>E</span><div style="display: inline;">&nbsp;&nbsp;</div><span>I</span><span>O</span></div><p style="font-size:36px">Click to explore</p><p>Move: WASD<br/>Jump: SPACE<br/>Look: MOUSE</p></div></div><div id="pp"></div><div id="textBox" class=""><div><p class="area"></p><hr><p class="description typewriter"></p></div></div><form class="reg"><input type="email" name="email" id="email"> <input name placeholder="name"> <input type="date" name="dob" id="dob" placeholder="Date of birth"> <input type="tel" name="phn" id="phn" placeholder="Phone Number"> <input type="submit" value="submit"></form><div id="feedbackPrompt" style="display: none;"><p>Do you like the college?</p><button id="yesButton">Yes</button> <button id="noButton">No</button></div><script type="module" src="./dist/bundle.js"></script><script>document.addEventListener('DOMContentLoaded', () => {
+		}</style><script defer="defer" src="bundle.js"></script></head><body><div id="blocker"><div id="instructions"><div class="branding" id="branding"><span>C</span><span>O</span><span>L</span><span>L</span><span>E</span><span>G</span><span>E</span><span>&nbsp;&nbsp;</span><span>I</span><span>O</span></div><p style="font-size:36px">Click to explore</p><p>Move: WASD<br/>Jump: SPACE<br/>Look: MOUSE</p></div></div><div id="pp"></div><div id="textBox" class=""><div><p class="area"></p><hr><p class="description typewriter"></p></div></div><form class="reg"><input type="email" name="email" id="email"> <input name placeholder="name"> <input type="date" name="dob" id="dob" placeholder="Date of birth"> <input type="tel" name="phn" id="phn" placeholder="Phone Number"> <input type="submit" value="submit"></form><div id="feedbackPrompt" style="display: none;"><p>Do you like the college?</p><button id="yesButton">Yes</button> <button id="noButton">No</button></div><script type="module" src="./dist/bundle.js"></script><script>document.addEventListener('DOMContentLoaded', () => {
 			const branding = document.getElementById('branding');
 			const letters = branding.querySelectorAll('span');
 			letters.forEach((letter, index) => {
