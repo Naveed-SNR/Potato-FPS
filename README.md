@@ -56,7 +56,7 @@ or build using
 
 ## Screenshots
 
-Here's a glimpse of what Potato-FPS looks like:
+Here's a glimpse of what College IO looks like:
 
 ![Screenshot 1](./screenshots/1.png)
 *Instructions*
