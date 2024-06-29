@@ -26,7 +26,7 @@
 
 Before you begin, ensure you have ![Node.js](https://nodejs.org/en) installed
 
-### Installing Potato-FPS
+### Installation
 
 1. Clone the repository:
     ```bash
