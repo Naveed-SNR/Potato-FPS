@@ -26,7 +26,7 @@
 
 Before you begin, ensure you have ![Node.js](https://nodejs.org/en) installed
 
-### Installing Potato-FPS
+### Steps to Install
 
 1. Clone the repository:
     ```bash
@@ -38,7 +38,7 @@ Before you begin, ensure you have ![Node.js](https://nodejs.org/en) installed
     ```
 3. Install the required dependencies:
     ```bash
-    [npm install]
+    npm install
     ```
 
 ## Usage
@@ -46,12 +46,12 @@ Before you begin, ensure you have ![Node.js](https://nodejs.org/en) installed
 After installing the dependencies, serve locally using
 
 ```bash
-[npm start]
+npm start
 ```
 or build using
 
 ```bash
-[npm run build]
+npm run build
 ```
 
 ## Screenshots
