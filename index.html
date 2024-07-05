@@ -198,7 +198,8 @@
 		.reg input[type="text"],
 		.reg input[type="date"],
 		.reg input[type="tel"],
-		.reg input[type="submit"] {
+		.reg input[type="submit"]
+		.reg input[required] {
 			width: calc(100%) !important;
 			padding: 10px !important;
 			margin-bottom: 15px !important;
@@ -229,7 +230,8 @@
 		.reg input[type="email"]:focus,
 		.reg input[type="text"]:focus,
 		.reg input[type="date"]:focus,
-		.reg input[type="tel"]:focus {
+		.reg input[type="tel"]:focus
+		.reg input[required]:focus {
 			outline: none; 
 			border-color: #00cccc;
 			/* Lighter neon blue on focus */
@@ -302,10 +304,10 @@
 	</div>
 	<form class="reg">
 		<div class="formheading">Click outstide to close</div>
-		<input type="email" name="email" id="email" placeholder="Email">
-		<input type="text" name="name" id="name" placeholder="Name">
-		<input type="date" name="dob" id="dob" placeholder="Date of birth">
-		<input type="tel" name="phn" id="phn" placeholder="Phone Number">
+		<input type="email" name="email" id="email" placeholder="Email" required>
+		<input type="text" name="name" id="name" placeholder="Name" required>
+		<input type="date" name="dob" id="dob" placeholder="Date of birth" required>
+		<input type="tel" name="phn" id="phn" placeholder="Phone Number" required>
 		<input type="submit" value="submit">
 	</form>
 
